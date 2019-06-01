@@ -1,0 +1,25 @@
+{
+  "name": "fake-graphql-api",
+  "version": "1.0.0",
+  "description": "GraphQL Fake API on Heroku",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dushanrandika/Fake-GraphQL-API.git"
+  },
+  "author": "Dushan Randika",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dushanrandika/Fake-GraphQL-API/issues"
+  },
+  "homepage": "https://github.com/dushanrandika/Fake-GraphQL-API#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.8.0",
+    "graphql": "^14.3.1",
+    "nodemon": "^1.19.1"
+  }
+}
