@@ -1,9 +1,10 @@
-var express = require('express');
-var express_graphql = require('express-graphql');
-var { buildSchema } = require('graphql');
+const express = require('express');
+const express_graphql = require('express-graphql');
+const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 //GraphQL Schema
-var schema = buildSchema(`
+const schema = buildSchema(`
     type Query {
         course(id: Int!): Course
         courses(topic: String): [Course]
@@ -18,7 +19,16 @@ var schema = buildSchema(`
     }
 `);
 
-var coursesData = [
+const uri = process.env.MONGO_ATLAS_URI;
+if (!uri) { throw new Error('Error'); }
+//Atlas connection
+mongoose.connect(uri, { useNewUrlParser: true },function (err) {
+    if (err) throw err;
+    console.log('Successfully connected');
+ });
+console.log(process.env.MONGO_ATLAS_URI)
+
+const coursesData = [
     {
         id: 1,
         title: 'The Complete Node.js Developer Course',
@@ -45,23 +55,23 @@ var coursesData = [
     }
 ]
 
-var getCourse = function(args) {
-    var id = args.id;
+const getCourse = function(args) {
+    const id = args.id;
     return coursesData.filter(course => {
         return course.id == id;
     })[0];
 }
 
-var getCourses = function(args) {
+const getCourses = function(args) {
     if (args.topic) {
-        var topic = args.topic;
+        const topic = args.topic;
         return coursesData.filter(course => course.topic === topic);
     } else {
         return coursesData;
     }
 }
 
-var updateCourseTopic = function({id, topic}) {
+const updateCourseTopic = function({id, topic}) {
     coursesData.map(course => {
         if (course.id === id) {
             course.topic = topic;
@@ -72,14 +82,14 @@ var updateCourseTopic = function({id, topic}) {
 }
 
 //Root resolver
-var root = {
+const root = {
     course: getCourse,
     courses: getCourses,
     updateCourseTopic: updateCourseTopic
 };
 
-//Create an express server and a GraphQL endpoint
-var app = express();
+const app = express();//Create an express server and a GraphQL endpoint
+
 app.use('/graphql', express_graphql({
     schema: schema,
     rootValue: root,
