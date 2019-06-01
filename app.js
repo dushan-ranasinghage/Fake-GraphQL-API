@@ -2,6 +2,7 @@ const express = require('express');
 const express_graphql = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv')
 
 //GraphQL Schema
 const schema = buildSchema(`
@@ -19,14 +20,17 @@ const schema = buildSchema(`
     }
 `);
 
+if (process.env.NODE_ENV  !== 'production') {
+    require('dotenv').config();
+  }
+
 const uri = process.env.MONGO_ATLAS_URI;
-if (!uri) { throw new Error('Error'); }
+
 //Atlas connection
 mongoose.connect(uri, { useNewUrlParser: true },function (err) {
     if (err) throw err;
     console.log('Successfully connected');
  });
-console.log(process.env.MONGO_ATLAS_URI)
 
 const coursesData = [
     {
