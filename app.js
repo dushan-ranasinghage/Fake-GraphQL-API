@@ -2,24 +2,21 @@ const express = require('express');
 const express_graphql = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv')
 
 //GraphQL Schema
 const schema = buildSchema(`
     type Query {
-        course(id: Int!): Course
-        courses(topic: String): [Course]
+        employee(id: String!): Employee
+        employees(title: String): [Employee]
     }
-    type Course {
-        id: Int
-        title: String
-        author: String
-        description: String
-        topic: String
-        url: String
+    type Employee {
+        id: String
+        employee_name: String
+        employee_salary: String
     }
 `);
 
+//Variables load from .env (dotenv) otherwise variables will be undefined
 if (process.env.NODE_ENV  !== 'production') {
     require('dotenv').config();
   }
@@ -29,67 +26,58 @@ const uri = process.env.MONGO_ATLAS_URI;
 //Atlas connection
 mongoose.connect(uri, { useNewUrlParser: true },function (err) {
     if (err) throw err;
-    console.log('Successfully connected');
+    console.log('Successfully connected to the Mongo Atlas Cluster');
  });
 
-const coursesData = [
-    {
-        id: 1,
-        title: 'The Complete Node.js Developer Course',
-        author: 'Andrew Mead, Rob Percival',
-        description: 'Learn Node.js by building real-world applications with Node, Express, MongoDB, Mocha, and more!',
-        topic: 'Node.js',
-        url: 'https://codingthesmartway.com/courses/nodejs/'
-    },
-    {
-        id: 2,
-        title: 'Node.js, Express & MongoDB Dev to Deployment',
-        author: 'Brad Traversy',
-        description: 'Learn by example building & deploying real-world Node.js applications from absolute scratch',
-        topic: 'Node.js',
-        url: 'https://codingthesmartway.com/courses/nodejs-express-mongodb/'
-    },
-    {
-        id: 3,
-        title: 'JavaScript: Understanding The Weird Parts',
-        author: 'Anthony Alicea',
-        description: 'An advanced JavaScript course for everyone! Scope, closures, prototypes, this, build your own framework, and more.',
-        topic: 'JavaScript',
-        url: 'https://codingthesmartway.com/courses/understand-javascript/'
-    }
-]
+ const EmployeeData = require('./models/employees')
 
-const getCourse = function(args) {
+
+async function getEmployee(args) {
     const id = args.id;
-    return coursesData.filter(course => {
-        return course.id == id;
-    })[0];
+    return await EmployeeData.find().
+        exec().
+        then(docs => {
+            return docs.filter(employee => {
+                console.log(employee.id)
+                return employee.id == id;
+            })[0];
+        }).
+        catch(err => {
+            console.log(err)
+        })
 }
 
-const getCourses = function(args) {
-    if (args.topic) {
-        const topic = args.topic;
-        return coursesData.filter(course => course.topic === topic);
-    } else {
-        return coursesData;
-    }
+const getEmployees = function(args) {
+    EmployeeData.find().
+        exec().
+        then(docs => {
+            if (args.title) {
+                const title = args.title;
+                return docs.filter(employee => employee.title === title);
+            } else {
+                return docs;
+            }
+        }).
+        catch(err => {
+            console.log(err)
+        })
 }
 
-const updateCourseTopic = function({id, topic}) {
-    coursesData.map(course => {
-        if (course.id === id) {
-            course.topic = topic;
-            return course;
-        }
-    });
-    return coursesData.filter(course => course.id === id)[0];
-}
+// const updateCourseTopic = function({id, topic}) {
+//     coursesData.map(course => {
+//         if (course.id === id) {
+//             course.topic = topic;
+//             return course;
+//         }
+//     });
+//     return coursesData.filter(course => course.id === id)[0];
+// }
 
 //Root resolver
 const root = {
-    course: getCourse,
-    courses: getCourses,
-    updateCourseTopic: updateCourseTopic
+    employee: getEmployee,
+    employees: getEmployees,
+    // updateCourseTopic: updateCourseTopic
 };
 
 const app = express();//Create an express server and a GraphQL endpoint
