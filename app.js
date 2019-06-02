@@ -46,8 +46,8 @@ async function getEmployee(args) {
         })
 }
 
-const getEmployees = function(args) {
-    EmployeeData.find().
+async function getEmployees(args) {
+    return await EmployeeData.find().
         exec().
         then(docs => {
             if (args.title) {
