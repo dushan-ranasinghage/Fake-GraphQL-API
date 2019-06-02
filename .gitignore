@@ -23,7 +23,3 @@ pids
 logs
 results
 build
-
-# Heroku deployment Files
-Procfile
-app.json

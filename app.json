@@ -1,0 +1,13 @@
+{
+    "name": "Fake GraphQL API",
+    "description": "Fake GraphQL API on Heroku",
+    "keywords": [
+      "Fake",
+      "API",
+      "GraphQL"
+    ],
+    "website": "https://dplbags.netlify.com/",
+    "repository": "https://github.com/dushanrandika/dpl-bags-webapi",
+    "logo": "https://small-sharp-tool.com/logo.svg",
+    "image": "heroku/ruby"
+  }
