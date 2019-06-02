@@ -6,11 +6,11 @@ const mongoose = require('mongoose');
 //GraphQL Schema
 const schema = buildSchema(`
     type Query {
-        employee(id: String!): Employee
+        employee(id: Int!): Employee
         employees(title: String): [Employee]
     }
     type Employee {
-        id: String
+        id: Int
         employee_name: String
         employee_salary: String
     }
@@ -38,7 +38,6 @@ async function getEmployee(args) {
         exec().
         then(docs => {
             return docs.filter(employee => {
-                console.log(employee.id)
                 return employee.id == id;
             })[0];
         }).
