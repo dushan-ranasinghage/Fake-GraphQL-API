@@ -31,7 +31,7 @@ mongoose.connect(uri, { useNewUrlParser: true },function (err) {
 
  const EmployeeData = require('./models/employees')
 
-
+//GET employee by id
 async function getEmployee(args) {
     const id = args.id;
     return await EmployeeData.find().
@@ -46,13 +46,14 @@ async function getEmployee(args) {
         })
 }
 
+// GET all employees
 async function getEmployees(args) {
     return await EmployeeData.find().
         exec().
         then(docs => {
-            if (args.title) {
-                const title = args.title;
-                return docs.filter(employee => employee.title === title);
+            if (args.employee_name) {
+                const employee_name = args.employee_name;
+                return docs.filter(employee => employee.employee_name === employee_name);
             } else {
                 return docs;
             }
